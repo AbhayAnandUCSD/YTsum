@@ -1,7 +1,6 @@
 import os
 from typing import Tuple
 from pytube import YouTube
-from moviepy.editor import VideoFileClip
 import tempfile
 
 class VideoDownloader:
@@ -34,15 +33,16 @@ class VideoDownloader:
             # Download video
             video_path = video_stream.download(output_path=self.output_dir)
             
-            # Extract audio
-            video_clip = VideoFileClip(video_path)
-            audio_path = os.path.join(self.output_dir, f"{os.path.splitext(os.path.basename(video_path))[0]}_audio.mp3")
-            video_clip.audio.write_audiofile(audio_path)
+            # Get audio stream and download
+            audio_stream = yt.streams.filter(only_audio=True).first()
+            audio_path = audio_stream.download(output_path=self.output_dir)
             
-            # Close the video clip
-            video_clip.close()
+            # Rename audio file to .mp3
+            base, _ = os.path.splitext(audio_path)
+            new_audio_path = base + '.mp3'
+            os.rename(audio_path, new_audio_path)
             
-            return video_path, audio_path
+            return video_path, new_audio_path
             
         except Exception as e:
             raise Exception(f"Error downloading video: {str(e)}")

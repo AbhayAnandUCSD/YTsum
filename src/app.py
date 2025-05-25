@@ -1,95 +1,57 @@
 import streamlit as st
-import tempfile
 import os
 from video.downloader import VideoDownloader
-from video.processor import VideoProcessor
-from audio.transcriber import AudioTranscriber
-from vision.analyzer import VisionAnalyzer
-from summarizer.generator import SummaryGenerator
+import tempfile
 
-def main():
-    st.title("YouTube Video Summarizer")
-    st.write("Generate comprehensive summaries of YouTube videos using AI")
+st.set_page_config(page_title="YouTube Video Downloader", page_icon="🎥")
 
-    # Input
-    url = st.text_input("Enter YouTube URL:")
-    output_format = st.radio(
-        "Summary Format",
-        ["long", "timestamped"],
-        format_func=lambda x: "Long-form Summary" if x == "long" else "Timestamped Summary"
-    )
+st.title("YouTube Video Downloader")
+st.write("Download videos and audio from YouTube URLs")
 
-    if st.button("Generate Summary"):
-        if not url:
-            st.error("Please enter a YouTube URL")
-            return
+# Create a temporary directory for downloads
+temp_dir = os.path.join(tempfile.gettempdir(), "youtube_downloads")
+os.makedirs(temp_dir, exist_ok=True)
 
-        with st.spinner("Processing video..."):
-            try:
-                # Create temporary directory
-                with tempfile.TemporaryDirectory() as temp_dir:
-                    # Initialize components
-                    downloader = VideoDownloader(temp_dir)
-                    processor = VideoProcessor(interval_seconds=5)
-                    transcriber = AudioTranscriber()
-                    analyzer = VisionAnalyzer()
-                    generator = SummaryGenerator()
+# Initialize the downloader
+downloader = VideoDownloader(output_dir=temp_dir)
 
-                    # Progress tracking
-                    progress_bar = st.progress(0)
-                    status_text = st.empty()
+# Input for YouTube URL
+url = st.text_input("Enter YouTube URL:")
 
-                    # Download video
-                    status_text.text("Downloading video...")
-                    video_path, audio_path = downloader.download_video(url)
-                    progress_bar.progress(20)
-
-                    # Extract keyframes
-                    status_text.text("Extracting keyframes...")
-                    keyframes = processor.extract_keyframes(video_path)
-                    progress_bar.progress(40)
-
-                    # Transcribe audio
-                    status_text.text("Transcribing audio...")
-                    transcript_segments = transcriber.transcribe_audio(audio_path)
-                    transcript = transcriber.format_transcript(
-                        transcript_segments,
-                        format_type=output_format
+if st.button("Download"):
+    if url:
+        try:
+            with st.spinner("Downloading video and audio..."):
+                video_path, audio_path = downloader.download_video(url)
+                
+                # Display success message
+                st.success("Download completed!")
+                
+                # Show file paths
+                st.write(f"Video saved to: {video_path}")
+                st.write(f"Audio saved to: {audio_path}")
+                
+                # Add download buttons
+                with open(video_path, 'rb') as video_file:
+                    st.download_button(
+                        label="Download Video",
+                        data=video_file,
+                        file_name=os.path.basename(video_path),
+                        mime="video/mp4"
                     )
-                    progress_bar.progress(60)
-
-                    # Analyze visual content
-                    status_text.text("Analyzing visual content...")
-                    visual_analyses = analyzer.analyze_keyframes(keyframes)
-                    visual_content = analyzer.format_visual_content(visual_analyses)
-                    progress_bar.progress(80)
-
-                    # Generate summary
-                    status_text.text("Generating summary...")
-                    summary = generator.generate_summary(
-                        transcript=transcript,
-                        visual_content=visual_content,
-                        format_type=output_format
+                
+                with open(audio_path, 'rb') as audio_file:
+                    st.download_button(
+                        label="Download Audio",
+                        data=audio_file,
+                        file_name=os.path.basename(audio_path),
+                        mime="audio/mp3"
                     )
-                    progress_bar.progress(100)
-
-                    # Display results
-                    st.success("Summary generated successfully!")
-                    
-                    # Create tabs for different views
-                    tab1, tab2, tab3 = st.tabs(["Summary", "Transcript", "Visual Analysis"])
-                    
-                    with tab1:
-                        st.markdown(summary)
-                    
-                    with tab2:
-                        st.text(transcript)
-                    
-                    with tab3:
-                        st.text(visual_content)
-
-            except Exception as e:
-                st.error(f"Error: {str(e)}")
-
-if __name__ == "__main__":
-    main() 
+                
+                # Cleanup files after download
+                downloader.cleanup(video_path, audio_path)
+                
+        except Exception as e:
+            st.error(f"Error: {str(e)}")
+    else:
+        st.warning("Please enter a YouTube URL") 
