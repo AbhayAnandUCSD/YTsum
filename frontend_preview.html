@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Summarizer - Frontend Preview</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        
+        .main-header {
+            font-size: 3rem;
+            font-weight: bold;
+            text-align: center;
+            color: #1f77b4;
+            margin-bottom: 2rem;
+            padding: 2rem 0;
+        }
+        
+        .sub-header {
+            font-size: 1.5rem;
+            color: #666;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .layout {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .main-content {
+            flex: 2;
+        }
+        
+        .sidebar {
+            flex: 1;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        
+        .input-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .url-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 1rem;
+        }
+        
+        .process-btn {
+            background: #1f77b4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .process-btn:hover {
+            background: #1565c0;
+        }
+        
+        .process-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .info-box {
+            background-color: #f0f2f6;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid #1f77b4;
+            margin: 1rem 0;
+        }
+        
+        .success-box {
+            background-color: #d4edda;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid #28a745;
+            margin: 1rem 0;
+        }
+        
+        .warning-box {
+            background-color: #fff3cd;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid #ffc107;
+            margin: 1rem 0;
+        }
+        
+        .progress-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1f77b4, #1565c0);
+            width: 60%;
+            transition: width 0.3s;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .status-icon {
+            margin-right: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .results-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .download-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+        
+        .expandable {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin: 1rem 0;
+        }
+        
+        .expandable-header {
+            background: #f8f9fa;
+            padding: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .expandable-content {
+            padding: 1rem;
+            display: none;
+        }
+        
+        .footer {
+            text-align: center;
+            color: #666;
+            padding: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <h1 class="main-header">🎬 YouTube Video Summarizer</h1>
+        <p class="sub-header">Transform YouTube videos into comprehensive summaries using AI</p>
+        
+        <div class="layout">
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Input Section -->
+                <div class="input-section">
+                    <h2>📹 Video Input</h2>
+                    <input type="text" class="url-input" placeholder="https://www.youtube.com/watch?v=..." value="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+                    <button class="process-btn">🚀 Generate Summary</button>
+                </div>
+                
+                <!-- Progress Section -->
+                <div class="progress-section">
+                    <h2>🔄 Processing Pipeline</h2>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    
+                    <div class="status-item">
+                        <span class="status-icon">✅</span>
+                        <span>Download completed!</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-icon">✅</span>
+                        <span>Extracted 12 keyframes</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-icon">✅</span>
+                        <span>Transcription completed!</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-icon">✅</span>
+                        <span>Visual analysis completed!</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-icon">✅</span>
+                        <span>Summary generated!</span>
+                    </div>
+                </div>
+                
+                <!-- Results Section -->
+                <div class="results-section">
+                    <h2>📋 Generated Summary</h2>
+                    <div class="success-box">
+                        <p><strong>Video Summary:</strong></p>
+                        <p>This video provides a comprehensive overview of machine learning fundamentals, covering key concepts such as supervised learning, unsupervised learning, and neural networks. The presenter demonstrates practical examples using Python code and visual diagrams to illustrate complex concepts.</p>
+                        <p>The visual content shows the presenter at a whiteboard explaining mathematical formulas, followed by code demonstrations on a computer screen. The tutorial includes interactive elements and real-world applications of machine learning algorithms.</p>
+                    </div>
+                    
+                    <div style="display: flex; gap: 1rem; margin: 1rem 0;">
+                        <button class="download-btn">📄 Download Summary</button>
+                        <button class="download-btn">📊 Processing Details</button>
+                    </div>
+                    
+                    <div class="expandable">
+                        <div class="expandable-header">📝 Transcript Preview</div>
+                        <div class="expandable-content">
+                            <textarea style="width: 100%; height: 150px; padding: 10px;" readonly>
+[00:00:00] Welcome to this comprehensive guide on machine learning...
+[00:00:15] Today we'll be covering the fundamentals of supervised learning...
+[00:00:30] Let me show you some practical examples...
+                            </textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="expandable">
+                        <div class="expandable-header">👁️ Visual Analysis Preview</div>
+                        <div class="expandable-content">
+                            <textarea style="width: 100%; height: 150px; padding: 10px;" readonly>
+[00:00:00] a person speaking (confidence: 0.85)
+[00:00:05] a presentation (confidence: 0.92)
+[00:00:10] a whiteboard (confidence: 0.78)
+[00:00:15] a computer screen (confidence: 0.89)
+                            </textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <h3>⚙️ Configuration</h3>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <label><strong>Summary Format:</strong></label>
+                    <select style="width: 100%; padding: 8px; margin-top: 0.5rem;">
+                        <option>long</option>
+                        <option>timestamped</option>
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <label><strong>Keyframe Interval (seconds):</strong></label>
+                    <input type="range" min="1" max="10" value="5" style="width: 100%; margin-top: 0.5rem;">
+                    <div style="text-align: center; margin-top: 0.5rem;">5</div>
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <label><strong>Max Summary Length:</strong></label>
+                    <input type="range" min="500" max="2000" value="1000" step="100" style="width: 100%; margin-top: 0.5rem;">
+                    <div style="text-align: center; margin-top: 0.5rem;">1000 tokens</div>
+                </div>
+                
+                <div class="success-box">
+                    ✅ OpenAI API key configured
+                </div>
+                
+                <div class="info-box">
+                    <h4>ℹ️ How it works</h4>
+                    <ol>
+                        <li><strong>Download</strong> video and extract audio</li>
+                        <li><strong>Transcribe</strong> audio using OpenAI Whisper</li>
+                        <li><strong>Analyze</strong> visual content using CLIP</li>
+                        <li><strong>Generate</strong> comprehensive summary using GPT-4</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Built with ❤️ using Streamlit, OpenAI, and CLIP</p>
+        <p>Transform any YouTube video into a comprehensive summary</p>
+    </div>
+</body>
+</html>

@@ -2,7 +2,7 @@ import streamlit as st
 import os
 import tempfile
 import time
-import openai
+from openai import OpenAI
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -67,7 +67,7 @@ with st.sidebar:
     # Model selection
     model_choice = st.selectbox(
         "GPT Model",
-        ["gpt-4", "gpt-3.5-turbo", "gpt-4-turbo"],
+        ["gpt-4o-mini"],
         help="Choose which GPT model to use for summarization"
     )
     
@@ -151,8 +151,8 @@ if process_button and url and api_key:
         status_text = st.empty()
     
     try:
-        # Set up OpenAI
-        openai.api_key = api_key
+        # Set up OpenAI client
+        client = OpenAI(api_key=api_key)
         
         # Mock processing steps
         steps = [
@@ -285,8 +285,8 @@ Summary:"""
             # Show visual analysis preview
             with st.expander("👁️ Visual Analysis Preview"):
                 st.text_area("Visual Content", mock_visual_content, height=200, disabled=True)
-    
-    except Exception as e:
+                
+        except Exception as e:
         st.error(f"❌ Error during processing: {str(e)}")
         st.info("Check your API key and try again.")
 
